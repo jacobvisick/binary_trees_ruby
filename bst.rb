@@ -46,7 +46,7 @@ class Tree
 
   def rebuild_tree(array)
     array = merge_sort(array.uniq)
-    build_tree(array)
+    @root = build_tree(array)
   end
 
   def merge_sort(data_array)
@@ -94,12 +94,12 @@ class Tree
 
   def insert(value)
     data = level_order
-    
+
     if data.include? value then
       puts "#{value} already in tree"
     else
       data.push(value)
-      @root = self.rebuild_tree(data)
+      self.rebuild_tree(data)
     end
   end
 
@@ -108,7 +108,7 @@ class Tree
 
     if data.include? value
       data -= [value]
-      @root = self.rebuild_tree(data)
+      self.rebuild_tree(data)
     else
       puts "#{value} not in tree"
     end
