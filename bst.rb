@@ -44,6 +44,11 @@ class Tree
     root
   end
 
+  def rebuild_tree(array)
+    array = merge_sort(array.uniq)
+    build_tree(array)
+  end
+
   def merge_sort(data_array)
     return data_array if data_array.length < 2
 
@@ -88,15 +93,31 @@ class Tree
   end
 
   def insert(value)
-    #todo
+    data = level_order
+    
+    if data.include? value then
+      puts "#{value} already in tree"
+    else
+      data.push(value)
+      @root = self.rebuild_tree(data)
+    end
   end
 
   def delete(value)
-    #todo
+    data = level_order
+
+    if data.include? value
+      data -= [value]
+      @root = self.rebuild_tree(data)
+    else
+      puts "#{value} not in tree"
+    end
+
   end
 
   def find(value)
     level_order { |node| return node if node.data == value }
+    return nil
   end
 
 end
