@@ -115,9 +115,14 @@ class Tree
 
   end
 
-  def find(value)
-    level_order { |node| return node if node.data == value }
-    return nil
-  end
+  def find(value, node = @root)
+    return node if value == node.data
+
+    if value < node.data then
+      node.left ? better_find(value, node.left) : return
+    else
+      node.right ? better_find(value, node.right) : return
+    end
+  end 
 
 end
