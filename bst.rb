@@ -41,7 +41,7 @@ class Tree
     root.add_child( build_tree(data_array[0...data_array.length/2]) )
     root.add_child( build_tree(data_array[data_array.length/2 + 1..-1]) )
 
-    return root
+    root
   end
 
   def merge_sort(data_array)
@@ -75,7 +75,7 @@ class Tree
 
     if block_given?
       #yield current node to passed block
-      block.call(node.data)
+      block.call(node)
       #continue through the queue until we reach the end
       queue.empty? ? return : (level_order(queue, accumulator, &block))
     else
@@ -85,6 +85,18 @@ class Tree
       queue.empty? ? accumulator : level_order(queue, accumulator)
     end
 
+  end
+
+  def insert(value)
+    #todo
+  end
+
+  def delete(value)
+    #todo
+  end
+
+  def find(value)
+    level_order { |node| return node if node.data == value }
   end
 
 end
