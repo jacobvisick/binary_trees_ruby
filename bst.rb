@@ -87,27 +87,4 @@ class Tree
 
   end
 
-
 end
-
-def run_tests
-  #generate random sample
-  sample_data = []
-  25.times { sample_data.push(rand(20)) }
-  
-  tree = Tree.new(sample_data)
-
-  puts "Input: #{sample_data}"
-  # make sure tree is balanced
-  tree.pretty_print
-  
-  # #level_order with block
-  output = []
-  tree.level_order { |value| output.push(value) }
-  p output
-
-  # #level_order without block
-  p tree.level_order
-end
-
-run_tests
