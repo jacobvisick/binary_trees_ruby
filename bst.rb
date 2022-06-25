@@ -106,23 +106,23 @@ class Tree
   def delete(value)
     data = level_order
 
-    if data.include? value
+    if data.include? value then
       data -= [value]
       self.rebuild_tree(data)
     else
       puts "#{value} not in tree"
     end
-
   end
 
   def find(value, node = @root)
     return node if value == node.data
 
     if value < node.data then
-      node.left ? better_find(value, node.left) : return
+      node.left ? find(value, node.left) : return
     else
-      node.right ? better_find(value, node.right) : return
+      node.right ? find(value, node.right) : return
     end
+
   end 
 
 end
