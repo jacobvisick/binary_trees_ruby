@@ -131,11 +131,13 @@ class Tree
   end 
 
   def inorder(node = @root, accumulator = [], &block)
+    # inorder = DFS left, parent, right
+
       if node.left then
         block_given? ? inorder(node.left, [], &block) : accumulator = inorder(node.left, accumulator)
       end
 
-      block_given? ? block.call(node, [], block) : accumulator.push(node.data)
+      block_given? ? block.call(node) : accumulator.push(node.data)
       
       if node.right then
         block_given? ? inorder(node.right, [], &block) : accumulator = inorder(node.right, accumulator)
@@ -144,5 +146,36 @@ class Tree
       accumulator unless block_given?
   end
 
+  def preorder(node = @root, accumulator = [], &block)
+    # preorder = DFS parent, left, right
+
+    block_given? ? block.call(node) : accumulator.push(node.data)
+
+    if node.left then
+      block_given? ? preorder(node.left, [], &block) : accumulator = preorder(node.left, accumulator)
+    end
+
+    if node.right then
+      block_given? ? preorder(node.right, [], &block) : accumulator = preorder(node.right, accumulator)
+    end
+
+    accumulator unless block_given?
+  end
+
+  def postorder(node = @root, accumulator = [], &block)
+    # postorder = DFS left, right, parent
+
+    if node.left then
+      block_given? ? postorder(node.left, [], &block) : accumulator = postorder(node.left, accumulator)
+    end
+
+    if node.right then
+      block_given? ? postorder(node.right, [], &block) : accumulator = postorder(node.right, accumulator)
+    end
+
+    block_given? ? block.call(node) : accumulator.push(node.data)
+
+    accumulator unless block_given?
+  end
 
 end
