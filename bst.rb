@@ -26,6 +26,7 @@ class Node
 end
 
 class Tree
+  attr_reader :root
 
   def initialize(data_array)
     #remove duplicates and sort data
@@ -176,6 +177,34 @@ class Tree
     block_given? ? block.call(node) : accumulator.push(node.data)
 
     accumulator unless block_given?
+  end
+
+  def height(node = @root, height = 0)
+    # returns height of tree if no node given
+    # return value if we've reached a leaf node
+    return height unless node.left || node.right
+    
+    # check height of left and right trees
+    left_height, right_height = 0, 0
+    left_height = height(node.left, height + 1) if node.left
+    right_height = height(node.right, height + 1) if node.right
+
+    # return whichever is greater
+    left_height > right_height ? left_height : right_height
+  end
+
+  def depth(target, node = @root, depth = 0)
+    #base case - return current depth if we've reached target node
+    return depth if node == target
+
+    # binary search for the node
+    if target.data < node.data then
+      node.left ? depth = depth(target, node.left, depth + 1) : return
+    else
+      node.right ? depth = depth(target, node.right, depth + 1) : return
+    end
+
+    depth
   end
 
 end
