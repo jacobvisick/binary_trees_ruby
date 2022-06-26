@@ -93,6 +93,10 @@ class Tree
   end
 
   def insert(value)
+    #TODO: Find a better way
+    # For this and #delete, you can probably just build a smaller tree
+    # with the root node being the new node taking its place
+    # ...but then we have to rebalance if >1 node is inserted/removed
     data = level_order
 
     if data.include? value then
@@ -104,6 +108,7 @@ class Tree
   end
 
   def delete(value)
+    #TODO: Find a better way
     data = level_order
 
     if data.include? value then
@@ -124,5 +129,20 @@ class Tree
     end
 
   end 
+
+  def inorder(node = @root, accumulator = [], &block)
+      if node.left then
+        block_given? ? inorder(node.left, [], &block) : accumulator = inorder(node.left, accumulator)
+      end
+
+      block_given? ? block.call(node, [], block) : accumulator.push(node.data)
+      
+      if node.right then
+        block_given? ? inorder(node.right, [], &block) : accumulator = inorder(node.right, accumulator)
+      end
+
+      accumulator unless block_given?
+  end
+
 
 end
