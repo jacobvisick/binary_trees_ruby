@@ -45,8 +45,8 @@ class Tree
     root
   end
 
-  def rebuild_tree(array)
-    array = merge_sort(array.uniq)
+  def rebalance(data_array = self.inorder)
+    array = merge_sort(data_array)
     @root = build_tree(array)
   end
 
@@ -104,7 +104,7 @@ class Tree
       puts "#{value} already in tree"
     else
       data.push(value)
-      self.rebuild_tree(data)
+      self.rebalance(data)
     end
   end
 
@@ -114,7 +114,7 @@ class Tree
 
     if data.include? value then
       data -= [value]
-      self.rebuild_tree(data)
+      self.rebalance(data)
     else
       puts "#{value} not in tree"
     end
@@ -205,6 +205,10 @@ class Tree
     end
 
     depth
+  end
+
+  def balanced?
+    return 1 >= ( height(@root.left) - height(@root.right) ).abs
   end
 
 end
