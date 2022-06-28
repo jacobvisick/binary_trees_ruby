@@ -45,8 +45,8 @@ class Tree
     root
   end
 
-  def rebalance(data_array = self.inorder)
-    array = merge_sort(data_array)
+  def rebalance
+    array = merge_sort(self.inorder) # just in case we messed up the order
     @root = build_tree(array)
   end
 
@@ -157,14 +157,38 @@ class Tree
   end
 
   def delete(value)
-    #TODO: Find a better way
-    data = level_order
+    node = self.find(value)
+    return if node == nil # value wasn't found
 
-    if data.include? value then
-      data -= [value]
-      self.rebalance(data)
-    else
-      puts "#{value} not in tree"
+    if node == @root then
+      data = inorder # get tree data in order
+      data -= [@root.data] # remove root value
+      @root = self.build_tree(data) # build tree from sorted data
+      return # no need to finish this method
+    end
+
+    parent_node = @root
+    until parent_node.left == node || parent_node.right == node
+      node.data > parent_node.data ? parent_node = parent_node.right : parent_node = parent_node.left
+    end
+
+    # shift children up the tree if node to delete has children
+    unless node.left == nil && node.right == nil
+      child_data = self.level_order([node]) # queue data in the order we want to add it back
+      child_data.shift # remove the value we are deleting
+
+      # replace reference to node to delete with next value in queue
+      first_child = Node.new(child_data.shift) # for direct assignment, make sure it's a node
+      first_child.data > parent_node.data ? parent_node.right = first_child : parent_node.left = first_child
+
+      # add the rest of the children from queue
+      child_data.each { |v| parent_node.add_child(v) }
+    end
+
+    # reference to node is removed from tree, now we just make sure it is still balanced
+    unless self.balanced?
+      puts "Rebalancing..."
+      self.rebalance
     end
   end
 
