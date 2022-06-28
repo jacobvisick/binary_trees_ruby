@@ -108,6 +108,64 @@ class Tree
     end
   end
 
+  def better_insert(value)
+    #find closest node to value
+    closest_node = @root
+    closest_diff = (value - closest_node.data).abs
+
+    node = @root
+    until !node.left && !node.right do
+      current_diff = (value - node.data).abs
+      if current_diff <= closest_diff then
+        closest_diff = current_diff
+        closest_node = node
+      end
+
+      if value > node.data then
+        node.right ? node = node.right : break
+      else
+        node.left ? node = node.left : break
+      end
+    end
+
+    #return if value is a duplicate
+    return if closest_diff == 0
+
+    puts "closest node : #{closest_node.data}" # REMOVE ME
+    # use self.inorder(node) to get sorted array of that subtree
+    subtree_data = self.inorder(closest_node)
+    subtree_data.push(value)
+
+    # use self.build_tree(array) to return a subtree with new values
+    new_node = self.build_tree( merge_sort(subtree_data) )
+
+    # place in tree
+    insterted = false
+    if @root == closest_node then
+      @root = new_node # we just rebuilt the whole tree
+      inserted = true # we can skip looking for the parent node
+    end
+
+    node = @root
+    until inserted do
+      if node.right == closest_node then
+        node.right = new_node
+        inserted = true
+      elsif node.left == closest_node then
+        node.left = new_node
+        inserted = true
+      else
+        closest_node.data > node.data ? node = node.right : node = node.left
+      end
+    end
+
+    unless self.balanced?
+      puts "Rebalancing..."
+      self.rebalance
+    end
+
+  end
+
   def delete(value)
     #TODO: Find a better way
     data = level_order
@@ -197,7 +255,7 @@ class Tree
     #base case - return current depth if we've reached target node
     return depth if node == target
 
-    # binary search for the node
+    # binary search for the end
     if target.data < node.data then
       node.left ? depth = depth(target, node.left, depth + 1) : return
     else
