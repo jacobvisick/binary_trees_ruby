@@ -112,53 +112,58 @@ class Tree
     #find closest node to value
     closest_node = @root
     closest_diff = (value - closest_node.data).abs
+    closest_parent = @root
 
     node = @root
+    parent_node = nil
     until !node.left && !node.right do
       current_diff = (value - node.data).abs
+
+      # save closer node if difference is smaller
       if current_diff <= closest_diff then
         closest_diff = current_diff
         closest_node = node
+        closest_parent = parent_node
       end
 
+      # move left or right based on value
       if value > node.data then
-        node.right ? node = node.right : break
+        if node.right then
+          parent_node = node
+          node = node.right 
+        else 
+          break
+        end
       else
-        node.left ? node = node.left : break
+        if node.left then
+          parent_node = node
+          node = node.left
+        else 
+          break
+        end
       end
     end
 
     #return if value is a duplicate
     return if closest_diff == 0
 
-    puts "closest node : #{closest_node.data}" # REMOVE ME
-    # use self.inorder(node) to get sorted array of that subtree
-    subtree_data = self.inorder(closest_node)
-    subtree_data.push(value)
+    # use self.level_order(node) to get sorted array of that subtree
+    # and add them as children to our new node in the correct order to
+    # keep it balanced
+    new_node = Node.new(value)
+    subtree_data = self.level_order([closest_node])
+    subtree_data.each { |value| new_node.add_child(value) }
 
-    # use self.build_tree(array) to return a subtree with new values
-    new_node = self.build_tree( merge_sort(subtree_data) )
 
-    # place in tree
-    insterted = false
+    # place our new node in tree in tree
     if @root == closest_node then
       @root = new_node # we just rebuilt the whole tree
-      inserted = true # we can skip looking for the parent node
+    else
+      # attach new_node to left or right of parent, depending on its value
+      new_node.data > closest_parent.data ? closest_parent.right = new_node : closest_parent.left = new_node
     end
 
-    node = @root
-    until inserted do
-      if node.right == closest_node then
-        node.right = new_node
-        inserted = true
-      elsif node.left == closest_node then
-        node.left = new_node
-        inserted = true
-      else
-        closest_node.data > node.data ? node = node.right : node = node.left
-      end
-    end
-
+    # make sure the tree is still balanced
     unless self.balanced?
       puts "Rebalancing..."
       self.rebalance
