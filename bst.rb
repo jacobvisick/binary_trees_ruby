@@ -97,10 +97,8 @@ class Tree
     #find closest node to value
     closest_node = @root
     closest_diff = (value - closest_node.data).abs
-    closest_parent = @root
 
     node = @root
-    parent_node = nil
     until !node.left && !node.right do
       current_diff = (value - node.data).abs
 
@@ -108,24 +106,13 @@ class Tree
       if current_diff <= closest_diff then
         closest_diff = current_diff
         closest_node = node
-        closest_parent = parent_node
       end
 
       # move left or right based on value
       if value > node.data then
-        if node.right then
-          parent_node = node
-          node = node.right 
-        else 
-          break
-        end
+        node.right ? node = node.right : break
       else
-        if node.left then
-          parent_node = node
-          node = node.left
-        else 
-          break
-        end
+        node.left ? node = node.left : break
       end
     end
 
@@ -144,6 +131,7 @@ class Tree
     if @root == closest_node then
       @root = new_node # we just rebuilt the whole tree
     else
+      closest_parent = self.find_parent(closest_node.data)
       # attach new_node to left or right of parent, depending on its value
       new_node.data > closest_parent.data ? closest_parent.right = new_node : closest_parent.left = new_node
     end
@@ -167,10 +155,7 @@ class Tree
       return # no need to finish this method
     end
 
-    parent_node = @root
-    until parent_node.left == node || parent_node.right == node
-      node.data > parent_node.data ? parent_node = parent_node.right : parent_node = parent_node.left
-    end
+    parent_node = self.find_parent(value)
 
     # shift children up the tree if node to delete has children
     unless node.left == nil && node.right == nil
@@ -201,7 +186,20 @@ class Tree
       node.right ? find(value, node.right) : return
     end
 
-  end 
+  end
+
+  def find_parent(value, node = @root)
+    if (node.right && node.right.data == value || node.left && node.left.data == value)
+      return node
+    end
+
+    if value < node.data then
+      node.left ? find_parent(value, node.left) : return
+    else
+      node.right ? find_parent(value, node.right) : return
+    end
+    
+  end
 
   def inorder(node = @root, accumulator = [], &block)
     # inorder = DFS left, parent, right
