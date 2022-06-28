@@ -94,21 +94,6 @@ class Tree
   end
 
   def insert(value)
-    #TODO: Find a better way
-    # For this and #delete, you can probably just build a smaller tree
-    # with the root node being the new node taking its place
-    # ...but then we have to rebalance if >1 node is inserted/removed
-    data = level_order
-
-    if data.include? value then
-      puts "#{value} already in tree"
-    else
-      data.push(value)
-      self.rebalance(data)
-    end
-  end
-
-  def better_insert(value)
     #find closest node to value
     closest_node = @root
     closest_diff = (value - closest_node.data).abs
